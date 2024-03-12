@@ -40,7 +40,7 @@ class FormArticles:
         articleDescription = StringVar()
         descriptionLabel = Label(formSection, text="Descripción:", bg="lightblue", font=("Lexend", 10))
         descriptionLabel.grid(column=1, row=1)
-        descriptionInput = Entry(formSection, textvariable=articleDescription, show="*")
+        descriptionInput = Entry(formSection, textvariable=articleDescription)
         descriptionInput.grid(column=1, row=2, pady=(0,10))
         
         articleBrand = StringVar()

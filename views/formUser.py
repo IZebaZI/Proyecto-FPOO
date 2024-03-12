@@ -40,7 +40,7 @@ class FormUsers:
         userPassword = StringVar()
         passwordLabel = Label(formSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
         passwordLabel.grid(column=1, row=1)
-        passwordInput = Entry(formSection, textvariable=userPassword, show="*")
+        passwordInput = Entry(formSection, textvariable=userPassword)
         passwordInput.grid(column=1, row=2, pady=(0,10))
         
         userDepartment = StringVar()

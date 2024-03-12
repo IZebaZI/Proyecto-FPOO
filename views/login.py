@@ -26,7 +26,7 @@ class LoginView:
         password = StringVar()
         passwordLabel = Label(loginSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
         passwordLabel.pack(pady=(10,0))
-        passwordInput = Entry(loginSection, textvariable=password, show="*")
+        passwordInput = Entry(loginSection, textvariable=password)
         passwordInput.pack(pady=(0,10))
         
         btnLogin = Button(loginSection, text="Acceder", bg="darkblue", fg="white", font=("Lexend", 8))

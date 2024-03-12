@@ -6,7 +6,7 @@ from navbar import NavBar
 class FormUsers:
     def createView(self):
         formUsers = Tk()
-        formUsers.title("Users Formulary")
+        formUsers.title("Edit User")
         formUsers.geometry('640x250')
         formUsers.configure(bg="lightblue")
         
@@ -28,34 +28,38 @@ class FormUsers:
         brand = Label(titleSection, text="Merks And Spen", fg="darkblue", bg="lightblue", font=("Lexend", 16, "bold"))
         brand.pack(pady=(0,10))
         
-        titleLabel = Label(titleSection, text="Insertar Usuario", bg="lightblue", font=("Lexend", 15))
+        titleLabel = Label(titleSection, text="Editar Usuario", bg="lightblue", font=("Lexend", 15))
         titleLabel.pack(pady=(0,10))
         
         userName = StringVar()
         nameLabel = Label(formSection, text="Nombre:", bg="lightblue", font=("Lexend", 10))
         nameLabel.grid(column=0, row=1)
         nameInput = Entry(formSection, textvariable=userName)
+        nameInput.insert(0, "Nombre del Usuario")
         nameInput.grid(column=0,row=2, pady=(0,10))
         
         userPassword = StringVar()
         passwordLabel = Label(formSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
         passwordLabel.grid(column=1, row=1)
-        passwordInput = Entry(formSection, textvariable=userPassword, show="*")
+        passwordInput = Entry(formSection, textvariable=userPassword)
+        passwordInput.insert(0, "Contraseña del Usuario")
         passwordInput.grid(column=1, row=2, pady=(0,10))
         
         userDepartment = StringVar()
         departmentLabel = Label(formSection, text="Departamento:", bg="lightblue", font=("Lexend", 10))
         departmentLabel.grid(column=0, row=3)
         departmentInput = Entry(formSection, textvariable=userDepartment)
+        departmentInput.insert(0, "Departamento del Usuario")
         departmentInput.grid(column=0, row=4)
         
         userMail = StringVar()
         mailLabel = Label(formSection, text="Correo:", bg="lightblue", font=("Lexend", 10))
         mailLabel.grid(column=1, row=3)
         mailInput = Entry(formSection, textvariable=userMail)
+        mailInput.insert(0, "Mail del Usuario")
         mailInput.grid(column=1, row=4)
         
-        btnCreate = Button(btnSection, text="Añadir Usuario", bg="lightgreen", fg="black", font=("Lexend", 9))
+        btnCreate = Button(btnSection, text="Editar Usuario", bg="lightgreen", fg="black", font=("Lexend", 9))
         btnCreate.pack(pady=(30,0))
         
         formUsers.mainloop()

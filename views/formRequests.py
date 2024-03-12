@@ -40,7 +40,7 @@ class FormRequests:
         requestDescription = StringVar()
         brandLabel = Label(formSection, text="Marca:", bg="lightblue", font=("Lexend", 10))
         brandLabel.grid(column=1, row=1)
-        brandInput = Entry(formSection, textvariable=requestDescription, show="*")
+        brandInput = Entry(formSection, textvariable=requestDescription)
         brandInput.grid(column=1, row=2, pady=(0,10))
         
         requestBrand = StringVar()
