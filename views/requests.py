@@ -47,10 +47,10 @@ class requestsView:
         
         requestTable.grid(column=0, row=2, sticky="", padx=10)
         
-        btnEdit = Button(requestsSection, text="Editar Usuario", bg="darkblue", fg="white", font=("Lexend", 9))
+        btnEdit = Button(requestsSection, text="Editar Pedido", bg="darkblue", fg="white", font=("Lexend", 9))
         btnEdit.grid(column=0, row=3, sticky="w", padx=10, pady=(10,0))
         
-        btnDelete = Button(requestsSection, text="Eliminar Usuario", bg="red", fg="white", font=("Lexend", 9))
+        btnDelete = Button(requestsSection, text="Eliminar Pedido", bg="red", fg="white", font=("Lexend", 9))
         btnDelete.grid(column=0, row=3, sticky="e", padx=10, pady=(10,0))
         
         requests.mainloop()

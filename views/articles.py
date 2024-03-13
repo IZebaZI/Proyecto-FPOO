@@ -61,6 +61,12 @@ class ArticlesView:
         canvas.draw()
         canvas.get_tk_widget().grid(column=1, row=2, sticky="")
         
+        btnEdit = Button(articlesSection, text="Editar Articulo", bg="darkblue", fg="white", font=("Lexend", 9))
+        btnEdit.grid(column=0, row=3, sticky="w", padx=10, pady=(10,0))
+        
+        btnDelete = Button(articlesSection, text="Eliminar Articulo", bg="red", fg="white", font=("Lexend", 9))
+        btnDelete.grid(column=0, row=3, sticky="e", padx=10, pady=(10,0))
+        
         articles.mainloop()
 
 articles = ArticlesView()

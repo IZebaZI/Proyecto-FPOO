@@ -59,7 +59,7 @@ class EditArticles:
         stockInput.insert(0, "Stock del Articulo")
         stockInput.grid(column=1, row=4)
         
-        btnCreate = Button(btnSection, text="Editar Artículo", bg="lightgreen", fg="black", font=("Lexend", 9))
+        btnCreate = Button(btnSection, text="Editar Artículo", bg="blue", fg="white", font=("Lexend", 9))
         btnCreate.pack(pady=(30,0))
         
         editArticles.mainloop()

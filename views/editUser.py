@@ -59,7 +59,7 @@ class FormUsers:
         mailInput.insert(0, "Mail del Usuario")
         mailInput.grid(column=1, row=4)
         
-        btnCreate = Button(btnSection, text="Editar Usuario", bg="lightgreen", fg="black", font=("Lexend", 9))
+        btnCreate = Button(btnSection, text="Editar Usuario", bg="blue", fg="white", font=("Lexend", 9))
         btnCreate.pack(pady=(30,0))
         
         formUsers.mainloop()
