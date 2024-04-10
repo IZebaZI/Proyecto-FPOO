@@ -12,32 +12,32 @@ class ControladorEmi:
             print("No se pudo conectar")
             
     
-    def verificarUsuario(self,password,departamento):
+    # def verificarUsuario(self,password,departamento):
         
-        conexion = self.conexion()
+    #     conexion = self.conexion()
         
-        if(password == "" or departamento == ""):
+    #     if(password == "" or departamento == ""):
             
-            messagebox.showwarning("Cuidado","Inputs vacios")
-            conexion.close()
+    #         messagebox.showwarning("Cuidado","Inputs vacios")
+    #         conexion.close()
             
-        else:
-            try:
-                cursor = conexion.cursor()
+    #     else:
+    #         try:
+    #             cursor = conexion.cursor()
                 
-                sqlInsert = 'select * from usuarios where password = ' + password + 'id_departameto = (select id from departamentos where nombre =' +  departamento + ')'
+    #             sqlInsert = 'select * from usuarios where password = ' + password + 'id_departameto = (select id from departamentos where nombre =' +  departamento + ')'
                 
-                cursor.execute(sqlInsert)
+    #             cursor.execute(sqlInsert)
                 
-                usuario = cursor.fetchone()
+    #             usuario = cursor.fetchone()
                 
-                conexion.commit()
-                conexion.close()
+    #             conexion.commit()
+    #             conexion.close()
                 
-                return usuario
+    #             return usuario
                 
-            except sqlite3.OperationalError:
-                print("Error en la consulta")
+    #         except sqlite3.OperationalError:
+    #             print("Error en la consulta")
     
     
     def insertarUsuario(self,nombre,correo,contraseña,rol,departamento):
@@ -63,4 +63,53 @@ class ControladorEmi:
             conexion.close()
             
             messagebox.showinfo("Exito","Un nuevo papu apareció en papulandia.")
+    
+    
+    def consultarDepartamentos(self):
+        conexion = self.conexion()
+        
+        cursor = conexion.cursor()
+        
+        sqlInsert = "SELECT nombre FROM departamentos"
+        
+        cursor.execute(sqlInsert)
+        
+        departamentos = cursor.fetchall()
+        
+        conexion.close()
+        
+        return departamentos
+    
+    
+    def consultarUsuarios(self):
+        
+        conexion = self.conexion()
+        
+        try:
+            cursor = conexion.cursor()
+            
+            sqlInsert = 'select usuarios.id,usuarios.nombre,usuarios.correo,usuarios.password,usuarios.status,usuarios.rol,departamentos.nombre from usuarios inner join departamentos on usuarios.id_departamento = departamentos.id '
+            
+            # sqlInsert = 'select 
+            # usuarios.id,
+            # usuarios.nombre,
+            # usuarios.correo,
+            # usuarios.password,
+            # usuarios.status
+            # usuarios.rol 
+            # departamentos.nombre
+            # from usuarios 
+            # inner join departamentos on usuarios.id_departamento = departamentos.id
+            # '
+            
+            cursor.execute(sqlInsert) 
+            
+            datos = cursor.fetchall()
+            
+            conexion.close()
+            
+            return datos
+
+        except sqlite3.OperationalError:
+            print("Error en la consulta")
     

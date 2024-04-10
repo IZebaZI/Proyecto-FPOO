@@ -65,24 +65,31 @@ class mainAdmin:
         titleLabel = Label(usersSection, text="Lista de Usuarios", bg="lightblue", font=("Lexend", 15))
         titleLabel.grid(column=0, row=1, sticky="", pady=(0,10))
 
-        userTable = ttk.Treeview(usersSection, columns=("#1", "#2", "#3", "#4"))
-        userTable.column("#0", width=80)
+        userTable = ttk.Treeview(usersSection, columns=("#1", "#2", "#3", "#4", "#5", "#6"))
+        userTable.column("#0", width=50)
         userTable.column("#1", width=200, anchor=CENTER)
-        userTable.column("#2", width=120, anchor=CENTER)
-        userTable.column("#3", width=110, anchor=CENTER)
-        userTable.column("#4", width=110, anchor=CENTER)
+        userTable.column("#2", width=150, anchor=CENTER)
+        userTable.column("#3", width=120, anchor=CENTER)
+        userTable.column("#4", width=60, anchor=CENTER)
+        userTable.column("#5", width=150, anchor=CENTER)
+        userTable.column("#6", width=150, anchor=CENTER)
 
         userTable.heading("#0", text="ID", anchor=CENTER)
         userTable.heading("#1", text="Nombre", anchor=CENTER)
         userTable.heading("#2", text="Correo", anchor=CENTER)
-        userTable.heading("#3", text="Departamento", anchor=CENTER)
-        userTable.heading("#4", text="Contraseña", anchor=CENTER)
+        userTable.heading("#3", text="Contraseña", anchor=CENTER)
+        userTable.heading("#4", text="Status", anchor=CENTER)
+        userTable.heading("#5", text="Rol", anchor=CENTER)
+        userTable.heading("#6", text="Departamento", anchor=CENTER)
+        
+        listaUsuarios = self.controlador.consultarUsuarios()
 
-        userTable.insert("", END, text="Prueba", values=("Sebastian Ramírez García", "sebas@gmail.com", "TI", "12345678"))
-        userTable.insert("", END, text="01", values=("Emiliano Pérez San Luis", "emi@gmail.com", "TI", "12345678"))
-        userTable.insert("", END, text="02", values=("Andrea Medina Everardo", "andrea@gmail.com", "RRHH", "12345678"))
-        userTable.insert("", END, text="03", values=("Antonio Montoya Magdaleno", "antonio@gmail.com", "DESARROLLO", "12345678"))
-
+        i = 0
+        for usuario in listaUsuarios:
+            userTable.insert("",'end',text=str(listaUsuarios[i][0],),values=(listaUsuarios[i][1],listaUsuarios[i][2],listaUsuarios[i][3],listaUsuarios[i][4],listaUsuarios[i][5],listaUsuarios[i][6]))
+            i += 1
+        
+        
         userTable.grid(column=0, row=2, sticky="", padx=10)
 
         btnEdit = Button(usersSection, text="Editar Usuario", bg="darkblue", fg="white", font=("Lexend", 9))
@@ -100,6 +107,7 @@ class mainAdmin:
 
         formSection = Frame(view2, bg="lightblue")
         formSection.pack(expand=False, fill="both", side="top")
+        
         #Configuración para expandir columnas y centrar elementos
         formSection.columnconfigure(0, weight=1)
         formSection.columnconfigure(1, weight=1)
@@ -125,11 +133,25 @@ class mainAdmin:
         passwordInput = Entry(formSection, textvariable=self.userPasswordR)
         passwordInput.grid(column=1, row=2, pady=(0,10))
 
+        
         self.userDepartmentR = StringVar()
         departmentLabel = Label(formSection, text="Departamento:", bg="lightblue", font=("Lexend", 10))
         departmentLabel.grid(column=0, row=3)
-        departmentInput = Entry(formSection, textvariable=self.userDepartmentR)
-        departmentInput.grid(column=0, row=4)
+
+        self.seleccionDep = StringVar()
+        
+        opcionesDepa = []
+        self.seleccionDep.set("Seleccionar departamento")
+        
+        depas = self.controlador.consultarDepartamentos()
+        
+        for depa in depas:
+            opcionesDepa.append(str(depa[0]))
+        
+        dropRoles = OptionMenu(formSection,self.seleccionDep,*opcionesDepa)
+        dropRoles.grid(column=0,row=4)
+        
+    
 
         self.userMailR = StringVar()
         mailLabel = Label(formSection, text="Correo:", bg="lightblue", font=("Lexend", 10))
@@ -137,6 +159,16 @@ class mainAdmin:
         mailInput = Entry(formSection, textvariable=self.userMailR)
         mailInput.grid(column=1, row=4)
 
+        roleLabel = Label(formSection, text="Rol:", bg="lightblue", font=("Lexend", 10))
+        roleLabel.grid(column=0, row=7)
+        self.seleccionRol = StringVar()
+        self.seleccionRol.set("Seleccionar Rol")
+        
+        opciones = ["Empleado","Administrador"]
+        dropRoles = OptionMenu(formSection,self.seleccionRol,*opciones)
+        dropRoles.grid(column=0,row=8)
+        
+        
         btnCreate = Button(btnSection, text="Añadir Usuario", bg="lightgreen", fg="black", font=("Lexend", 9),command=self.crearUsuario)
         btnCreate.pack(pady=(30,0))
 
@@ -489,9 +521,18 @@ class mainAdmin:
         nombre = str(self.userNameR.get())
         correo = str(self.userMailR.get())
         passw = str(self.userPasswordR.get())
-        rol = 1 
-        departamento = int(self.userDepartmentR.get())
+        rol = str(self.seleccionRol.get())
+        selectDepartamento = (str(self.seleccionDep))
         
-        self.controlador.insertarUsuario(nombre,correo,passw,rol,departamento)
+        depas = self.controlador.consultarDepartamentos()
+        
+        id_departamento = 0
+        for dep in depas:
+            if dep[0] == selectDepartamento:
+                break
+            
+            id_departamento += 1
+        
+        self.controlador.insertarUsuario(nombre,correo,passw,rol,id_departamento)
         
         
