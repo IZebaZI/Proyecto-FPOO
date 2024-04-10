@@ -1,0 +1,3 @@
+from mainAdmin import *
+
+mainAdmin()
