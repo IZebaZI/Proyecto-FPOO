@@ -536,3 +536,7 @@ class mainAdmin:
         self.controlador.insertarUsuario(nombre,correo,passw,rol,id_departamento)
         
         
+
+
+# -------------------
+

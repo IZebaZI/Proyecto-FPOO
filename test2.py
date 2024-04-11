@@ -13,27 +13,12 @@ class tkinterApp(tk.Tk):
 		tk.Tk.__init__(self, *args, **kwargs)
 		
 		# creating a container
-		
-        brand = Label(loginSection, text="Merks And Spen", fg="darkblue", bg="lightblue", font=("Lexend", 20, "bold"))
-        brand.pack(pady=(10,10))
-        
-        titleLabel = Label(loginSection, text="Login", bg="lightblue", font=("Lexend", 15))
-        titleLabel.pack()
-        
-        usuario = StringVar()
-        userLabel = Label(loginSection, text="Departamento:", bg="lightblue", font=("Lexend", 10))
-        userLabel.pack(pady=(10,0))
-        userInput = Entry(loginSection, textvariable=usuario)
-        userInput.pack()
-        
-        password = StringVar()
-        passwordLabel = Label(loginSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
-        passwordLabel.pack(pady=(10,0))
-        passwordInput = Entry(loginSection, textvariable=password)
-        passwordInput.pack(pady=(0,10))
-        
-        btnLogin = Button(loginSection, text="Acceder", bg="darkblue", fg="white", font=("Lexend", 8))
-        btnLogin.pack()
+		container = tk.Frame(self) 
+		container.pack(side = "top", fill = "both", expand = True) 
+
+		container.grid_rowconfigure(0, weight = 1)
+		container.grid_columnconfigure(0, weight = 1)
+
 		# initializing frames to an empty array
 		self.frames = {} 
 
@@ -43,9 +28,6 @@ class tkinterApp(tk.Tk):
 
 			frame = F(container, self)
 
-			# initializing frame of that object from
-			# startpage, page1, page2 respectively with 
-			# for loop
 			self.frames[F] = frame 
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")

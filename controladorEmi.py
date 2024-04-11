@@ -12,32 +12,34 @@ class ControladorEmi:
             print("No se pudo conectar")
             
     
-    # def verificarUsuario(self,password,departamento):
+    def verificarUsuario(self,departamento,password):
         
-    #     conexion = self.conexion()
+        conexion = self.conexion()
         
-    #     if(password == "" or departamento == ""):
+        if(password == "" or departamento == ""):
             
-    #         messagebox.showwarning("Cuidado","Inputs vacios")
-    #         conexion.close()
+            messagebox.showwarning("Cuidado","Inputs vacios")
+            conexion.close()
             
-    #     else:
-    #         try:
-    #             cursor = conexion.cursor()
+        else:
+            try:
+                cursor = conexion.cursor()
                 
-    #             sqlInsert = 'select * from usuarios where password = ' + password + 'id_departameto = (select id from departamentos where nombre =' +  departamento + ')'
+                sqlInsert = 'select * from usuarios where password = "' + password + '" and id_departamento = (select id from departamentos where nombre = "' +  departamento + '")'
                 
-    #             cursor.execute(sqlInsert)
+                cursor.execute(sqlInsert)
                 
-    #             usuario = cursor.fetchone()
+                usuario = cursor.fetchone()
                 
-    #             conexion.commit()
-    #             conexion.close()
+                conexion.commit()
+                conexion.close()
                 
-    #             return usuario
+                print(usuario)
                 
-    #         except sqlite3.OperationalError:
-    #             print("Error en la consulta")
+                return usuario
+                
+            except sqlite3.OperationalError:
+                print("Error en la consulta")
     
     
     def insertarUsuario(self,nombre,correo,contraseña,rol,departamento):
@@ -62,7 +64,7 @@ class ControladorEmi:
             conexion.commit()
             conexion.close()
             
-            messagebox.showinfo("Exito","Un nuevo papu apareció en papulandia.")
+            return 1
     
     
     def consultarDepartamentos(self):
