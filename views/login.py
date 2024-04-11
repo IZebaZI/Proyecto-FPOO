@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 
 class LoginView:
-    def createView(self):
+    def __init__(self):
         login = Tk()
         login.title("Login")
         login.geometry('520x280')
@@ -31,7 +31,4 @@ class LoginView:
         
         btnLogin = Button(loginSection, text="Acceder", bg="darkblue", fg="white", font=("Lexend", 8))
         btnLogin.pack()
-        login.mainloop()
-
-login = LoginView()
-login.createView()
+        
