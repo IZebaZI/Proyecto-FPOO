@@ -1,7 +1,0 @@
-from mainAdmin import *
-
-
-mainAdmin()
-
-
-

@@ -16,6 +16,8 @@ class tkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         
         tk.Tk.__init__(self, *args, **kwargs)
+        
+        self.geometry("1200x600")
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -25,39 +27,47 @@ class tkinterApp(tk.Tk):
 
         self.frames = {}
 
-        for F in (Login, ConsultarUsuarios, RegistrarUsuario, EditarUsuario, CrearPedido, ListaPedidos, EditarPedido, ListaArticulos, AgregarArticulo, ModificarArticulo):
+        for F in (Login, ConsultarUsuarios, RegistrarUsuario, EditarUsuario,CrearPedido, ListaPedidos, EditarPedido,ListaArticulos, AgregarArticulo, ModificarArticulo):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(Login)
-
-        self.Menu()
         
+        self.Menu() # Borrar luego xd
+
     
     def show_frame(self, cont):
+        # if cont not in (Login,RegistrarUsuario):
+        #     self.Menu()
+        
         frame = self.frames[cont]
         frame.tkraise()
-        
 
     def Menu(self):
         
             menubar = tk.Menu(self)
 
-            filemenu = tk.Menu(menubar, tearoff=0)
-            editmenu = tk.Menu(menubar, tearoff=0)
-            helpmenu = tk.Menu(menubar, tearoff=0)
+            usuariosMenu = tk.Menu(menubar, tearoff=0)
+            usuariosMenu.add_command(label="Consultar Usuarios",command=lambda: self.show_frame(ConsultarUsuarios))
+            usuariosMenu.add_command(label="Editar Usuario",command=lambda: self.show_frame(EditarUsuario))
             
-            filemenu.add_command(label="Nuevo")
-            filemenu.add_command(label="Abrir")
-            filemenu.add_command(label="Guardar")
-            filemenu.add_command(label="Cerrar")
-            filemenu.add_separator()
-            filemenu.add_command(label="Salir", command=self.quit)
+            pedidosMenu = tk.Menu(menubar, tearoff=0)
+            pedidosMenu.add_command(label="Realizar Pedidos",command=lambda: self.show_frame(CrearPedido))
+            pedidosMenu.add_command(label="Lista de Pedidos",command=lambda: self.show_frame(ListaPedidos))
+            pedidosMenu.add_command(label="Editar Pedido",command=lambda: self.show_frame(EditarPedido))
 
-            menubar.add_cascade(label="Archivo", menu=filemenu)
-            menubar.add_cascade(label="Editar", menu=editmenu)
-            menubar.add_cascade(label="Ayuda", menu=helpmenu)
+            articulosMenu = tk.Menu(menubar, tearoff=0)
+            articulosMenu.add_command(label="Agregar Artículo",command=lambda: self.show_frame(AgregarArticulo))
+            articulosMenu.add_command(label="Lista de Artículos",command=lambda: self.show_frame(ListaArticulos))
+            articulosMenu.add_command(label="Editar Artículo",command=lambda: self.show_frame(ModificarArticulo))
+
+            # usuariosMenu.add_separator()
+            # usuariosMenu.add_command(label="Salir", command=self.quit)
+
+            menubar.add_cascade(label="Usuarios", menu=usuariosMenu)
+            menubar.add_cascade(label="Pedidos", menu=pedidosMenu)
+            menubar.add_cascade(label="Articulos", menu=articulosMenu)
 
             self.config(menu=menubar)
 
@@ -103,8 +113,12 @@ class Login(tk.Frame):
             print(messagebox.showwarning("Acceso Denegado","No se pudo encontrar el usuario"))
 
         else:
-            print(messagebox.showinfo("Accesso Autorizado","Bienvenido " + str(usuario[1])))
-            controller.show_frame(ConsultarUsuarios)
+            if usuario[4] == 1:
+                print(messagebox.showinfo("Accesso Autorizado","Bienvenido " + str(usuario[1])))
+                controller.show_frame(ConsultarUsuarios)
+                
+            elif usuario[4] == 0:
+                print(messagebox.showerror("Accesso Denegado","El usuario " + str(usuario[1]) + " está dado de baja."))
 
 
 # 2 - Consultar Usuarios -------------------------------------------------------------------------------------
@@ -122,31 +136,61 @@ class ConsultarUsuarios(tk.Frame):
         titleLabel = tk.Label(usersSection, text="Lista de Usuarios", bg="lightblue", font=("Lexend", 15))
         titleLabel.grid(column=0, row=1, sticky="", pady=(0, 10))
 
-        userTable = ttk.Treeview(usersSection, columns=("#1", "#2", "#3", "#4", "#5", "#6"))
-        userTable.column("#0", width=50)
-        userTable.column("#1", width=200, anchor=tk.CENTER)
-        userTable.column("#2", width=150, anchor=tk.CENTER)
-        userTable.column("#3", width=120, anchor=tk.CENTER)
-        userTable.column("#4", width=60, anchor=tk.CENTER)
-        userTable.column("#5", width=150, anchor=tk.CENTER)
-        userTable.column("#6", width=150, anchor=tk.CENTER)
+        self.userTable = ttk.Treeview(usersSection, columns=("#1", "#2", "#3", "#4", "#5", "#6"))
+        self.userTable.column("#0", width=50)
+        self.userTable.column("#1", width=200, anchor=tk.CENTER)
+        self.userTable.column("#2", width=150, anchor=tk.CENTER)
+        self.userTable.column("#3", width=120, anchor=tk.CENTER)
+        self.userTable.column("#4", width=60, anchor=tk.CENTER)
+        self.userTable.column("#5", width=150, anchor=tk.CENTER)
+        self.userTable.column("#6", width=150, anchor=tk.CENTER)
 
-        userTable.heading("#0", text="ID", anchor=tk.CENTER)
-        userTable.heading("#1", text="Nombre", anchor=tk.CENTER)
-        userTable.heading("#2", text="Correo", anchor=tk.CENTER)
-        userTable.heading("#3", text="Contraseña", anchor=tk.CENTER)
-        userTable.heading("#4", text="Status", anchor=tk.CENTER)
-        userTable.heading("#5", text="Rol", anchor=tk.CENTER)
-        userTable.heading("#6", text="Departamento", anchor=tk.CENTER)
+        self.userTable.heading("#0", text="ID", anchor=tk.CENTER)
+        self.userTable.heading("#1", text="Nombre", anchor=tk.CENTER)
+        self.userTable.heading("#2", text="Correo", anchor=tk.CENTER)
+        self.userTable.heading("#3", text="Contraseña", anchor=tk.CENTER)
+        self.userTable.heading("#4", text="Status", anchor=tk.CENTER)
+        self.userTable.heading("#5", text="Rol", anchor=tk.CENTER)
+        self.userTable.heading("#6", text="Departamento", anchor=tk.CENTER)
         
-        userTable.grid(column=0, row=2, sticky="", padx=10)
+        self.userTable.grid(column=0, row=2, sticky="", padx=10)
+        
+        listaUsuarios = controladorBD.consultarUsuarios()
+        
+        i = 0
+        for usuario in listaUsuarios:
+            
+            rol = ""
+            
+            if usuario[4] == 1:
+                rol = "Activo"
+            elif usuario[4] == 0:
+                rol = "Inactivo" 
+            
+            self.userTable.insert("",'end',text=str(listaUsuarios[i][0],),values=(listaUsuarios[i][1],listaUsuarios[i][2],listaUsuarios[i][3],rol,listaUsuarios[i][5],listaUsuarios[i][6]))
+            i += 1
+        
+        btnUpdate = tk.Button(usersSection, text="Actualizar Tabla", bg="red", fg="white", font=("Lexend", 9),command=lambda: self.actualizarTabla())
+        btnUpdate.grid(column=0, row=3, sticky="s", padx=10, pady=(10, 0))
 
-        btnEdit = tk.Button(usersSection, text="Editar Usuario", bg="darkblue", fg="white", font=("Lexend", 9))
-        btnEdit.grid(column=0, row=3, sticky="w", padx=10, pady=(10, 0))
+    def actualizarTabla(self):
+        listaUsuarios = controladorBD.consultarUsuarios()
+        
+        for item in self.userTable.get_children():
+            self.userTable.delete(item)
 
-        btnDelete = tk.Button(usersSection, text="Eliminar Usuario", bg="red", fg="white", font=("Lexend", 9))
-        btnDelete.grid(column=0, row=3, sticky="e", padx=10, pady=(10, 0))
-
+        i = 0
+        for usuario in listaUsuarios:
+            rol = ""
+            if usuario[4] == 1:
+                rol = "Activo"
+            elif usuario[4] == 0:
+                rol = "Inactivo" 
+            
+            self.userTable.insert("",'end',text=str(listaUsuarios[i][0],),values=(listaUsuarios[i][1],listaUsuarios[i][2],listaUsuarios[i][3],rol,listaUsuarios[i][5],listaUsuarios[i][6]))
+            i += 1
+        
+        
 
 # 3 - Registrar Usuario -------------------------------------------------------------------------------------
 
@@ -178,14 +222,14 @@ class RegistrarUsuario(tk.Frame):
         self.userNameR = tk.StringVar()
         nameLabel = tk.Label(formSection, text="Nombre:", bg="lightblue", font=("Lexend", 10))
         nameLabel.grid(column=0, row=1)
-        nameInput = tk.Entry(formSection, textvariable=self.userNameR)
-        nameInput.grid(column=0, row=2, pady=(0,10))
+        self.nameInput = tk.Entry(formSection, textvariable=self.userNameR)
+        self.nameInput.grid(column=0, row=2, pady=(0,10))
 
         self.userPasswordR = tk.StringVar()
         passwordLabel = tk.Label(formSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
         passwordLabel.grid(column=1, row=1)
-        passwordInput = tk.Entry(formSection, textvariable=self.userPasswordR)
-        passwordInput.grid(column=1, row=2, pady=(0,10))
+        self.passwordInput = tk.Entry(formSection, textvariable=self.userPasswordR)
+        self.passwordInput.grid(column=1, row=2, pady=(0,10))
         
         departmentLabel = tk.Label(formSection, text="Departamento:", bg="lightblue", font=("Lexend", 10))
         departmentLabel.grid(column=0, row=3)
@@ -199,7 +243,7 @@ class RegistrarUsuario(tk.Frame):
         depas = controladorBD.consultarDepartamentos()
         
         for depa in depas:
-            opcionesDepa.append(depa)
+            opcionesDepa.append(depa[1])
 
         dropDep = ttk.OptionMenu(formSection, self.seleccionDep, *opcionesDepa)
         dropDep.grid(column=0, row=4)
@@ -207,8 +251,8 @@ class RegistrarUsuario(tk.Frame):
         self.userMailR = tk.StringVar()
         mailLabel = tk.Label(formSection, text="Correo:", bg="lightblue", font=("Lexend", 10))
         mailLabel.grid(column=1, row=3)
-        mailInput = tk.Entry(formSection, textvariable=self.userMailR)
-        mailInput.grid(column=1, row=4)
+        self.mailInput = tk.Entry(formSection, textvariable=self.userMailR)
+        self.mailInput.grid(column=1, row=4)
 
         roleLabel = tk.Label(formSection, text="Rol:", bg="lightblue", font=("Lexend", 10))
         roleLabel.grid(column=0, row=7)
@@ -223,6 +267,9 @@ class RegistrarUsuario(tk.Frame):
 
         btnCreate = tk.Button(btnSection, text="Registrar Usuario", bg="lightgreen", fg="black", font=("Lexend", 9),command=lambda: self.crearUsuario(controller))
         btnCreate.pack(pady=(30,0))
+        
+        btnLogin= tk.Button(btnSection, text="Ir a Login", bg="green", fg="black", font=("Lexend", 9),command=lambda: controller.show_frame(Login))
+        btnLogin.pack(pady=(30,0))
 
     def crearUsuario(self,controller):
         
@@ -230,23 +277,28 @@ class RegistrarUsuario(tk.Frame):
         correo = str(self.userMailR.get())
         passw = str(self.userPasswordR.get())
         rol = str(self.seleccionRol.get())
-        selectDepartamento = (str(self.seleccionDep))
+        selectDepartamento = (str(self.seleccionDep.get()))
         
+        id_departamento = 0
         
         depas = controladorBD.consultarDepartamentos()
         
-        id_departamento = 0
-        for dep in depas:
-            if dep[0] == selectDepartamento:
-                break
-            
-            id_departamento += 1
+        for depa in depas:
+            if depa[1] == selectDepartamento:
+                id_departamento = depa[0]
         
         registro = controladorBD.insertarUsuario(nombre,correo,passw,rol,id_departamento)
         
         if registro == 1:
             print(messagebox.showinfo("Usuario Registrado","Por favor inicie sesión."))
             controller.show_frame(Login)
+            
+            self.nameInput.delete(0,END)
+            self.passwordInput.delete(0,END)
+            self.mailInput.delete(0,END)
+            self.seleccionRol.set("Seleccionar Rol")
+            self.seleccionDep.set("Seleccionar Departamento") 
+            
         
     
 # 4 - Editar Usuario -------------------------------------------------------------------------------------
@@ -275,36 +327,159 @@ class EditarUsuario(tk.Frame):
         titleLabel = tk.Label(titleSection, text="Editar Usuario", bg="lightblue", font=("Lexend", 15))
         titleLabel.pack(pady=(0,10))
 
-        userName = tk.StringVar()
+        self.userNameBusq = tk.StringVar()
+        nameLabelB = tk.Label(titleSection, text="Nombre del usuario a editar", bg="lightblue", font=("Lexend", 10))
+        nameLabelB.pack(pady=(0,10))
+        nameInputB = tk.Entry(titleSection, textvariable=self.userNameBusq)
+        nameInputB.pack(pady=(0,10))
+        
+        btnBusq = tk.Button(titleSection, text="Buscar", bg="blue", fg="white", font=("Lexend", 9),command=self.buscarUsuario)
+        btnBusq.pack(pady=(0,10))
+        
+        self.userName = tk.StringVar()
         nameLabel = tk.Label(formSection, text="Nombre:", bg="lightblue", font=("Lexend", 10))
-        nameLabel.grid(column=0, row=1)
-        nameInput = tk.Entry(formSection, textvariable=userName)
-        nameInput.insert(0, "Nombre del Usuario")
-        nameInput.grid(column=0, row=2, pady=(0,10))
+        nameLabel.grid(column=0, row=5)
+        self.nameInput = tk.Entry(formSection, textvariable=self.userName)
+        self.nameInput.grid(column=0, row=6, pady=(0,10))
 
-        userPassword = tk.StringVar()
+        self.userPassword = tk.StringVar()
         passwordLabel = tk.Label(formSection, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
-        passwordLabel.grid(column=1, row=1)
-        passwordInput = tk.Entry(formSection, textvariable=userPassword)
-        passwordInput.insert(0, "Contraseña del Usuario")
-        passwordInput.grid(column=1, row=2, pady=(0,10))
+        passwordLabel.grid(column=1, row=5)
+        self.passwordInput = tk.Entry(formSection, textvariable=self.userPassword)
+        self.passwordInput.grid(column=1, row=6, pady=(0,10))
 
-        userDepartment = tk.StringVar()
         departmentLabel = tk.Label(formSection, text="Departamento:", bg="lightblue", font=("Lexend", 10))
-        departmentLabel.grid(column=0, row=3)
-        departmentInput = tk.Entry(formSection, textvariable=userDepartment)
-        departmentInput.insert(0, "Departamento del Usuario")
-        departmentInput.grid(column=0, row=4)
+        departmentLabel.grid(column=0, row=7)
+        
+        
+        opcionesDepa = ["Departamento"]  
+        
+        self.seleccionDep = tk.StringVar()
+        self.seleccionDep.set(opcionesDepa[0])  
 
-        userMail = tk.StringVar()
+        depas = controladorBD.consultarDepartamentos()
+        
+        for depa in depas:
+            opcionesDepa.append(depa[1])
+
+        dropDep = ttk.OptionMenu(formSection, self.seleccionDep, *opcionesDepa)
+        dropDep.grid(column=0, row=8,pady=(0,10))
+        
+
+        self.userMail = tk.StringVar()
         mailLabel = tk.Label(formSection, text="Correo:", bg="lightblue", font=("Lexend", 10))
-        mailLabel.grid(column=1, row=3)
-        mailInput = tk.Entry(formSection, textvariable=userMail)
-        mailInput.insert(0, "Mail del Usuario")
-        mailInput.grid(column=1, row=4)
+        mailLabel.grid(column=1, row=7)
+        self.mailInput = tk.Entry(formSection, textvariable=self.userMail)
+        self.mailInput.grid(column=1, row=8)
 
-        btnCreate = tk.Button(btnSection, text="Editar Usuario", bg="blue", fg="white", font=("Lexend", 9))
+        
+        estadoLabel = tk.Label(formSection, text="Estado:", bg="lightblue", font=("Lexend", 10))
+        estadoLabel.grid(column=0, row=9)
+        
+        opcionesEstado = ["Estado", "Activo","Inactivo"]  
+        
+        self.seleccionEstado = tk.StringVar()
+        self.seleccionEstado.set(opcionesEstado[0])  
+
+        dropEst = ttk.OptionMenu(formSection, self.seleccionEstado, *opcionesEstado)
+        dropEst.grid(column=0, row=10,pady=(0,10))
+        
+        
+        
+        rolLabel = tk.Label(formSection, text="Rol:", bg="lightblue", font=("Lexend", 10))
+        rolLabel.grid(column=1, row=9)
+        
+        opcionesRol = ["Rol", "Empleado","Administrador"]  
+        
+        self.seleccionRol = tk.StringVar()
+        self.seleccionRol.set(opcionesRol[0])  
+
+        dropRol = ttk.OptionMenu(formSection, self.seleccionRol, *opcionesRol)
+        dropRol.grid(column=1, row=10,pady=(0,10))
+        
+        
+        btnCreate = tk.Button(btnSection, text="Actualizar Usuario", bg="blue", fg="white", font=("Lexend", 9),command=self.actualizarUsuario)
         btnCreate.pack(pady=(30,0))
+        
+        btnEliminar = tk.Button(btnSection, text="Eliminar Usuario", bg="red", fg="white", font=("Lexend", 9),command=self.eliminarUsuario)
+        btnEliminar.pack(pady=(10,0))
+        
+
+    def buscarUsuario(self):
+        if self.userNameBusq.get() == "":
+            print(messagebox.showwarning("Cuidado","Escriba un nombre de usuario válido"))
+            
+        else:
+            usuario = controladorBD.consultarUsuario(self.userNameBusq.get())
+            if usuario == None:
+                print(messagebox.showwarning("Cuidado","No se encontro el usuario"))
+            else:
+                self.nameInput.delete(0,END)
+                self.nameInput.insert(0, str(usuario[1]))
+                
+                self.mailInput.delete(0,END)
+                self.mailInput.insert(0, str(usuario[2]))
+                
+                self.passwordInput.delete(0,END)
+                self.passwordInput.insert(0, str(usuario[3]))
+                
+                if usuario[4] == 1:
+                    self.seleccionEstado.set("Activo")
+                elif usuario[4] == 0:
+                    self.seleccionEstado.set("Inactivo")
+                    
+                self.seleccionRol.set(usuario[5])
+                
+                self.seleccionDep.set(str(usuario[6]))
+    
+    def actualizarUsuario(self):
+        if self.userNameBusq.get() == "":
+            print(messagebox.showwarning("Cuidado","Escriba un nombre de usuario"))
+            
+        else:
+            
+            usuario = controladorBD.consultarUsuario(self.userNameBusq.get())
+            
+            id_usuario = usuario[0]
+            nombreN = self.userName.get()
+            mailN = self.userMail.get()
+            passN = self.userPassword.get()
+            estadoN = 0
+            rolN = self.seleccionRol.get()
+            id_departamentoN = 0
+            
+            if self.seleccionEstado.get() == "Activo":
+                    estadoN = 1
+            elif self.seleccionEstado.get() == "Inactivo":
+                    estadoN = 0
+                    
+            
+            depN = self.seleccionDep.get()
+            depas = controladorBD.consultarDepartamentos()
+            for depa in depas:
+                if depa[1] == depN:
+                    id_departamentoN = depa[0]
+                    
+            
+            actualizacion = controladorBD.actualizarUsuario(id_usuario,nombreN,mailN,passN,estadoN,rolN,id_departamentoN)
+            
+            if actualizacion == 1:
+                messagebox.showinfo("Éxito","El usuario fue actualizado con éxito")
+            
+    
+    def eliminarUsuario(self):
+        if self.userNameBusq.get() == "":
+            print(messagebox.showwarning("Cuidado","Escriba un nombre de usuario"))
+            
+        else:
+            usuario = controladorBD.consultarUsuario(self.userNameBusq.get())
+            
+            eliminacion = controladorBD.eliminarUsuario(str(usuario[0]))
+            
+            if eliminacion == 1:
+                messagebox.showinfo("Éxito","El usuario fue eliminado con éxito")
+            
+        
 
 # 5 - Crear Pedido -------------------------------------------------------------------------------------
 

@@ -6,8 +6,8 @@ class ControladorEmi:
     def conexion(self):
         try:
             conex = sqlite3.connect('DBMerks&Spen.db')
-            print("Conectado")
             return conex
+        
         except sqlite3.OperationalError:
             print("No se pudo conectar")
             
@@ -72,7 +72,7 @@ class ControladorEmi:
         
         cursor = conexion.cursor()
         
-        sqlInsert = "SELECT nombre FROM departamentos"
+        sqlInsert = "SELECT * FROM departamentos"
         
         cursor.execute(sqlInsert)
         
@@ -115,3 +115,70 @@ class ControladorEmi:
         except sqlite3.OperationalError:
             print("Error en la consulta")
     
+    def consultarUsuario(self, nombre):
+        
+        conexion = self.conexion()
+        
+        try:
+            cursor = conexion.cursor()
+            
+            sqlInsert = 'select usuarios.id,usuarios.nombre,usuarios.correo,usuarios.password,usuarios.status,usuarios.rol,departamentos.nombre from usuarios inner join departamentos on usuarios.id_departamento = departamentos.id where usuarios.nombre = "' + nombre + '"'
+            
+            cursor.execute(sqlInsert) 
+            
+            datos = cursor.fetchone()
+            
+            conexion.close()
+            
+            return datos
+
+        except sqlite3.OperationalError:
+            print("Error en la consulta")
+            
+    
+    def actualizarUsuario(self,idB,nombreN,correoN,contraseñaN,estadoN,rolN,departamentoN):
+        
+        conexion = self.conexion()
+        
+        if(nombreN == "" or correoN == "" or contraseñaN == "" or estadoN == "Estado" or rolN == "Rol" or departamentoN == "Departamento"):
+            
+            messagebox.showwarning("Cuidado","Inputs invalidos")
+            conexion.close()
+            
+        else:
+            
+            try:
+            
+                cursor = conexion.cursor()
+                
+                sqlInsert = "UPDATE usuarios SET nombre = '" + nombreN + "', correo = '" + correoN + "', password = '" + contraseñaN + "', status = '" + str(estadoN) + "', rol = '" + rolN + "', id_departamento = '" + str(departamentoN) + "' WHERE id = '" + str(idB) + "'"
+
+                cursor.execute(sqlInsert) 
+                
+                conexion.commit()
+                conexion.close()
+                
+                return 1
+            except sqlite3.OperationalError:
+                print("error")
+    
+    
+    def eliminarUsuario(self,id_usuario):
+        
+        conexion = self.conexion()
+        
+        try:
+        
+            cursor = conexion.cursor()
+            
+            sqlInsert = 'DELETE FROM usuarios WHERE id = ' + id_usuario
+
+            cursor.execute(sqlInsert) 
+            
+            conexion.commit()
+            conexion.close()
+            
+            return 1
+        except sqlite3.OperationalError:
+            print("error")
+        
