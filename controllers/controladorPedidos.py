@@ -69,4 +69,67 @@ class ControladorPedidos():
             return True
         except sqlite3.OperationalError:
             print("No se pudo ejecutar la consulta")
+        
+    def misPedidos(self, idUsuario):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlSelect = "select id, status from pedidos where id_usuario =" + str(idUsuario)
+            cursor.execute(sqlSelect)
+            pedidosUsuario = cursor.fetchall()
+            conexion.close()
+            return pedidosUsuario
+        except sqlite3.OperationalError:
+            print("No se pudo ejecutar la consulta")
             
+    def crearPedido(self, idUsuario):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlInsert = "insert into pedidos (id_usuario, status) values (?, 'En proceso')"
+            datos = (str(idUsuario))
+            cursor.execute(sqlInsert, datos)
+            conexion.commit()
+            conexion.close()
+            return True
+        except sqlite3.OperationalError:
+            print("No se pudo iniciar el pedido")
+            
+    def ultimoPedido(self, idUsuario):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlSelect = "select id from pedidos where id_usuario = ? order by id desc limit 1"
+            datos = (str(idUsuario))
+            cursor.execute(sqlSelect, datos)
+            ultimoPedido = cursor.fetchone()
+            conexion.close()
+            return ultimoPedido
+        except sqlite3.OperationalError:
+            print("No se pudo ejecutar la consulta")
+    
+    def insertarArticulosPedido(self, idPedido, idArticulo, cantidad):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlInsert = "insert into articulosPedido (id_pedido, id_articulo, cantidad) values (?, ?, ?)"
+            datos = (str(idPedido), str(idArticulo), str(cantidad))
+            cursor.execute(sqlInsert, datos)
+            conexion.commit()
+            conexion.close()
+            return True
+        except sqlite3.OperationalError:
+            print("No se pudo pedir el articulo")
+    
+    def buscarArticulo(self, nombreArticulo, marcaArticulo):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlSelect = "select articulos.id, articulos.nombre, marcas.nombre from articulos inner join marcas on marcas.id = articulos.id_marca where articulos.nombre = ? and marcas.nombre = ?"
+            datos = (nombreArticulo, marcaArticulo)
+            cursor.execute(sqlSelect, datos)
+            articulo = cursor.fetchone()
+            conexion.close()
+            return articulo
+        except sqlite3.OperationalError:
+            print("No se pudo pedir el articulo")

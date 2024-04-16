@@ -51,8 +51,8 @@ def verificarUsuario(departamento, password):
             if usuario[5] == "Administrador":
                 viewAdmin(controladorUsuarios, controladorArticulos, controladorPedidos)
             else:
-                viewUser(usuario)
+                viewUser(usuario, controladorPedidos, controladorArticulos)
         else:
             print(messagebox.showerror("Accesso Denegado","El usuario " + str(usuario[1]) + " está dado de baja."))
 
-login.mainloop()
+login.mainloop() 

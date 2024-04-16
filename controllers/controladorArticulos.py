@@ -34,6 +34,15 @@ class ControladorArticulos:
         conexion.close()
         return marcas
     
+    def consultarArticulos(self):
+        conexion = self.conexion()
+        cursor = conexion.cursor()
+        sqlSelect = "select * from articulos"
+        cursor.execute(sqlSelect)
+        articulos = cursor.fetchall()
+        conexion.close()
+        return articulos
+    
     def buscarArticulo(self, nombre, marcaIngresada):
         conexion = self.conexion()
         if nombre == "" or marcaIngresada == "":

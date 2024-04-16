@@ -226,13 +226,13 @@ class viewAdmin:
         
         
         
-        # Requests Functions
+        # Requests Functions ------------------------------------------------------------------------------------------------
         def actualizarListaPedidos():
             listaPedidos = controladorPedidos.listaPedidos()
             datosArticulos = controladorPedidos.datosArticulos()
             
             if listaPedidos == [] or listaPedidos == None:
-                messagebox.showwarning("Lista vacía", "No hay usuarios registrados")
+                messagebox.showwarning("Lista vacía", "No hay pedidos registrados")
             else:
                 for item in requestTable.get_children():
                     requestTable.delete(item)
@@ -243,6 +243,31 @@ class viewAdmin:
                         if articulo[0] == pedido[0]:
                             articulosPedido = articulosPedido + "(" + articulo[1] + ")  "
                     requestTable.insert("", END, text=pedido[0], values=(articulosPedido, pedido[1], pedido[2], pedido[3]))
+        
+        def buscarPedido(idPedido):
+            if idPedido == "":
+                messagebox.showwarning("Cuidado","Inputs Vacios")
+            else:
+                datosPedido = controladorPedidos.buscarInfoPedido(idPedido)
+                articulosBusqueda = controladorPedidos.articulosPedido(idPedido)
+                if datosPedido == None or datosPedido == "" or articulosBusqueda == None or articulosBusqueda == "":
+                    messagebox.showwarning("Cuidado","No se encontró el pedido solicitado")
+                else:
+                    textPedido.delete("1.0",END)
+                    textPedido.insert(END, datosPedido)
+                    textArticulos.delete("1.0",END)
+                    textArticulos.insert(END, articulosBusqueda)
+                    seleccionStatus.set(datosPedido[4])
+        
+        def actualizarPedido(idPedido, estado):
+            if idPedido == "" or estado == "":
+                messagebox.showwarning("Cuidado","Inputs Vacios")
+            else:
+                status = controladorPedidos.actualizarPedido(idPedido, estado)
+                if status == True:
+                    messagebox.showinfo("Exito","El estado del pedido se actualizó correctamente")
+                else:
+                    messagebox.showwarning("Cuidado","No se pudo actualizar el pedido")
             
         # Create User ---------------------------------------------------------------------------------------------------------
         titleSection = Frame(createUser, bg="lightblue")
@@ -491,31 +516,6 @@ class viewAdmin:
         dropStatus.pack(pady=(0,10))
 
         Button(btnSection, text="Actualizar Pedido", bg="blue", fg="white", font=("Lexend", 9), command=lambda:actualizarPedido(requestBusq.get(), seleccionStatus.get())).pack(pady=(30,0))
-        
-        def buscarPedido(idPedido):
-            if idPedido == "":
-                messagebox.showwarning("Cuidado","Inputs Vacios")
-            else:
-                datosPedido = controladorPedidos.buscarInfoPedido(idPedido)
-                articulosBusqueda = controladorPedidos.articulosPedido(idPedido)
-                if datosPedido == None or datosPedido == "" or articulosBusqueda == None or articulosBusqueda == "":
-                    messagebox.showwarning("Cuidado","No se encontró el pedido solicitado")
-                else:
-                    textPedido.delete("1.0",END)
-                    textPedido.insert(END, datosPedido)
-                    textArticulos.delete("1.0",END)
-                    textArticulos.insert(END, articulosBusqueda)
-                    seleccionStatus.set(datosPedido[4])
-        
-        def actualizarPedido(idPedido, estado):
-            if idPedido == "" or estado == "":
-                messagebox.showwarning("Cuidado","Inputs Vacios")
-            else:
-                status = controladorPedidos.actualizarPedido(idPedido, estado)
-                if status == True:
-                    messagebox.showinfo("Exito","El estado del pedido se actualizó correctamente")
-                else:
-                    messagebox.showwarning("Cuidado","No se pudo actualizar el pedido")
 
         # Articles List ---------------------------------------------------------------------------------------------------------
         articlesSection = Frame(showArticles, bg="lightblue")
