@@ -34,7 +34,6 @@ class ControladorEmi:
                 conexion.commit()
                 conexion.close()
                 
-                print(usuario)
                 
                 return usuario
                 

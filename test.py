@@ -12,6 +12,10 @@ from controladorEmi import *
 controladorBD = ControladorEmi()
 
 
+global var
+var = 1
+
+
 class tkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         
@@ -104,6 +108,7 @@ class Login(tk.Frame):
         btnRegister = tk.Button(self, text="Registrarse", bg="green", fg="white", font=("Lexend", 8),command= lambda : controller.show_frame(RegistrarUsuario))
         btnRegister.pack()
         
+        
     
     def VerificarUsuario(self,departamento,passw,controller):
         
@@ -115,6 +120,7 @@ class Login(tk.Frame):
         else:
             if usuario[4] == 1:
                 print(messagebox.showinfo("Accesso Autorizado","Bienvenido " + str(usuario[1])))
+                var = usuario
                 controller.show_frame(ConsultarUsuarios)
                 
             elif usuario[4] == 0:
@@ -172,6 +178,8 @@ class ConsultarUsuarios(tk.Frame):
         
         btnUpdate = tk.Button(usersSection, text="Actualizar Tabla", bg="red", fg="white", font=("Lexend", 9),command=lambda: self.actualizarTabla())
         btnUpdate.grid(column=0, row=3, sticky="s", padx=10, pady=(10, 0))
+        
+        print(var)
 
     def actualizarTabla(self):
         listaUsuarios = controladorBD.consultarUsuarios()
