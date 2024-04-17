@@ -6,7 +6,7 @@ class viewUser:
     def __init__(self, userInfo, controladorPedidos, controladorArticulos):
         userWindow = Tk()
         userWindow.title(f"Merks & Spen: {str(userInfo[1])}")
-        userWindow.geometry("1100x550")
+        userWindow.state('zoomed')
 
         notebook = ttk.Notebook(userWindow)
         notebook.pack(fill="both", expand="yes")
