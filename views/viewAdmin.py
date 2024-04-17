@@ -174,35 +174,44 @@ class viewAdmin:
 
         # Articles Functions --------------------------------------------------------------------------------------------------
         def crearArticulo(nombre, seleccionMarca, descripcion, unidades_paquete, stock):
-            listaMarcas = controladorArticulos.consultarMarcas()
-            for marca in listaMarcas:
-                if marca[1] == seleccionMarca:
-                    id_marca = marca[0]
-            status = controladorArticulos.insertArticulo(nombre, id_marca, descripcion, unidades_paquete, stock)
-            if status == True:
-                messagebox.showinfo("Exito", "El articulo se guardó exitosamente")
-                articleNameInput.delete(0,END)
-                articleDescInput.delete(0,END)
-                unitsInput.delete(0,END)
-                stockInput.delete(0,END)
-                seleccionBrand.set("Seleccionar Marca")
-            else:
+            if nombre == "" or seleccionMarca == "" or descripcion == "" or unidades_paquete == "" or stock == "":
                 messagebox.showwarning("Cuidado", "Inputs vacios")
+            else:
+                if unidades_paquete.isdigit() and stock.isdigit():
+                    listaMarcas = controladorArticulos.consultarMarcas()
+                    for marca in listaMarcas:
+                        if marca[1] == seleccionMarca:
+                            id_marca = marca[0]
+                    status = controladorArticulos.insertArticulo(nombre, id_marca, descripcion, unidades_paquete, stock)
+                    if status == True:
+                        messagebox.showinfo("Exito", "El articulo se guardó exitosamente")
+                        articleNameInput.delete(0,END)
+                        articleDescInput.delete(0,END)
+                        unitsInput.delete(0,END)
+                        stockInput.delete(0,END)
+                        seleccionBrand.set("Seleccionar Marca")
+                    else:
+                        messagebox.showwarning("Cuidado", "No se pudo almacenar el articulo")
+                else:
+                    messagebox.showwarning("Cuidado", "Inputs numéricos contienen letras")
         
         def buscarArticulo(nombre, marcaIngresada):
-            articulo = controladorArticulos.buscarArticulo(nombre, marcaIngresada)
-            if articulo == None:
-                messagebox.showwarning("Cuidado", "No se encontró el artículo solicitado")
+            if nombre == "" or marcaIngresada == "":
+                messagebox.showwarning("Cuidado", "Inputs vacios")
             else:
-                articleNameInputB.delete(0,END)
-                articleNameInputB.insert(0, articulo[1])
-                articleDescInputB.delete(0,END)
-                articleDescInputB.insert(0, articulo[3])
-                unitsInputB.delete(0,END)
-                unitsInputB.insert(0, articulo[4])
-                stockInputB.delete(0,END)
-                stockInputB.insert(0, articulo[5])
-                seleccionBrandB.set(articulo[2])
+                articulo = controladorArticulos.buscarArticulo(nombre, marcaIngresada)
+                if articulo == None:
+                    messagebox.showwarning("Cuidado", "No se encontró el artículo solicitado")
+                else:
+                    articleNameInputB.delete(0,END)
+                    articleNameInputB.insert(0, articulo[1])
+                    articleDescInputB.delete(0,END)
+                    articleDescInputB.insert(0, articulo[3])
+                    unitsInputB.delete(0,END)
+                    unitsInputB.insert(0, articulo[4])
+                    stockInputB.delete(0,END)
+                    stockInputB.insert(0, articulo[5])
+                    seleccionBrandB.set(articulo[2])
         
         def actualizarLista():
             listaArticulos = controladorArticulos.listaArticulos()
@@ -215,15 +224,21 @@ class viewAdmin:
                     articlesTable.insert("", END, text=articulo[0], values=articulo[1:])
         
         def actualizarArticulo(nombreIngresado, marcaIngresada, nombre, seleccionMarca, descripcion, unidades_paquete, stock):
-            listaMarcas = controladorArticulos.consultarMarcas()
-            for marca in listaMarcas:
-                if marca[1] == seleccionMarca:
-                    id_marca = marca[0]
-            status = controladorArticulos.actualizarArticulo(nombreIngresado, marcaIngresada, nombre, id_marca, descripcion, unidades_paquete, stock)
-            if status == True:
-                messagebox.showinfo("Éxito","El articulo fue actualizado con éxito")
+            if nombre == "" or seleccionMarca == "" or descripcion == "" or unidades_paquete == "" or stock == "":
+                messagebox.showwarning("Cuidado", "Inputs vacios")
             else:
-                messagebox.showwarning("Cuidado","El articulo no pudo ser actualizado")
+                if unidades_paquete.isdigit() and stock.isdigit():
+                    listaMarcas = controladorArticulos.consultarMarcas()
+                    for marca in listaMarcas:
+                        if marca[1] == seleccionMarca:
+                            id_marca = marca[0]
+                    status = controladorArticulos.actualizarArticulo(nombreIngresado, marcaIngresada, nombre, id_marca, descripcion, unidades_paquete, stock)
+                    if status == True:
+                        messagebox.showinfo("Éxito","El articulo fue actualizado con éxito")
+                    else:
+                        messagebox.showwarning("Cuidado","El articulo no pudo ser actualizado")
+                else:
+                    messagebox.showwarning("Cuidado", "Inputs numéricos contienen letras")
                 
         def eliminarArticulo(nombreIngresado, marcaIngresada):
             status = controladorArticulos.eliminarArticulo(nombreIngresado, marcaIngresada)

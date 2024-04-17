@@ -45,30 +45,26 @@ class ControladorArticulos:
     
     def buscarArticulo(self, nombre, marcaIngresada):
         conexion = self.conexion()
-        if nombre == "" or marcaIngresada == "":
-            messagebox.showwarning("Cuidado", "Inputs vacios")
-            conexion.close()
+        try:
+            listaMarcas = self.consultarMarcas()
+            marcaEncontrada = False
+            for marca in listaMarcas:
+                if marcaIngresada == marca[1]:
+                    id_marca = marca[0]
+                    marcaEncontrada = True
+            if marcaEncontrada == True:
+                    cursor = conexion.cursor()
+                    sqlSelect = "select articulos.id, articulos.nombre, marcas.nombre, articulos.descripcion, articulos.unidades_paquete, articulos.stock from articulos inner join marcas on articulos.id_marca = marcas.id where articulos.nombre = ? and marcas.id = ?"
+                    datos = (nombre, id_marca)
+                    cursor.execute(sqlSelect, datos)
+                    articulo = cursor.fetchone()
+                    conexion.close()
+                    return articulo
+            else:
+                return None
+        except sqlite3.OperationalError:
+            print("No se pudo ejecutar la búsqueda")
             return None
-        else:
-            try:
-                listaMarcas = self.consultarMarcas()
-                marcaEncontrada = False
-                for marca in listaMarcas:
-                    if marcaIngresada == marca[1]:
-                        id_marca = marca[0]
-                        marcaEncontrada = True
-                if marcaEncontrada == True:
-                        cursor = conexion.cursor()
-                        sqlSelect = "select articulos.id, articulos.nombre, marcas.nombre, articulos.descripcion, articulos.unidades_paquete, articulos.stock from articulos inner join marcas on articulos.id_marca = marcas.id where articulos.nombre = ? and marcas.id = ?"
-                        datos = (nombre, id_marca)
-                        cursor.execute(sqlSelect, datos)
-                        articulo = cursor.fetchone()
-                        conexion.close()
-                        return articulo
-                else:
-                    return None
-            except sqlite3.OperationalError:
-                print("No se pudo ejecutar la búsqueda")
     
     def listaArticulos(self):
         conexion = self.conexion()

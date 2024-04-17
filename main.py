@@ -34,25 +34,28 @@ userInput.pack()
 password = StringVar()
 passwordLabel = Label(login, text="Contraseña:", bg="lightblue", font=("Lexend", 10))
 passwordLabel.pack(pady=(10, 0))
-passwordInput = Entry(login, textvariable=password)
+passwordInput = Entry(login, textvariable=password, show="*")
 passwordInput.pack(pady=(0, 10))
 
 btnLogin = Button(login, text="Acceder", bg="darkblue", fg="white", font=("Lexend", 8), command=lambda:verificarUsuario(usuario.get(), password.get()))
 btnLogin.pack(pady=(0,10))
 
 def verificarUsuario(departamento, password):
-    usuario = controladorUsuarios.verificarUsuario(departamento, password)
-    if usuario == None or usuario == "":
-        print(messagebox.showwarning("Acceso Denegado","No se pudo encontrar el usuario"))
+    if(password == "" or departamento == ""):
+            messagebox.showwarning("Cuidado","Inputs vacios")
     else:
-        if usuario[6] == 1:
-            print(messagebox.showinfo("Accesso Autorizado","Bienvenido " + str(usuario[1])))
-            loginWindow.destroy()
-            if usuario[5] == "Administrador":
-                viewAdmin(controladorUsuarios, controladorArticulos, controladorPedidos)
-            else:
-                viewUser(usuario, controladorPedidos, controladorArticulos)
+        usuario = controladorUsuarios.verificarUsuario(departamento, password)
+        if usuario == None or usuario == "":
+            print(messagebox.showwarning("Acceso Denegado","No se pudo encontrar el usuario"))
         else:
-            print(messagebox.showerror("Accesso Denegado","El usuario " + str(usuario[1]) + " está dado de baja."))
+            if usuario[6] == 1:
+                print(messagebox.showinfo("Accesso Autorizado","Bienvenido " + str(usuario[1])))
+                loginWindow.destroy()
+                if usuario[5] == "Administrador":
+                    viewAdmin(controladorUsuarios, controladorArticulos, controladorPedidos)
+                else:
+                    viewUser(usuario, controladorPedidos, controladorArticulos)
+            else:
+                print(messagebox.showerror("Accesso Denegado","El usuario " + str(usuario[1]) + " está dado de baja."))
 
 login.mainloop() 

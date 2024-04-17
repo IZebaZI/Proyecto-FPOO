@@ -12,20 +12,16 @@ class ControladorUsuarios:
     
     def verificarUsuario(self,departamento,password):
         conexion = self.conexion()
-        if(password == "" or departamento == ""):
-            messagebox.showwarning("Cuidado","Inputs vacios")
+        try:
+            cursor = conexion.cursor()
+            sqlInsert = 'select * from usuarios where password = "' + password + '" and id_departamento = (select id from departamentos where nombre = "' +  departamento + '")'
+            cursor.execute(sqlInsert)
+            usuario = cursor.fetchone()
+            conexion.commit()
             conexion.close()
-        else:
-            try:
-                cursor = conexion.cursor()
-                sqlInsert = 'select * from usuarios where password = "' + password + '" and id_departamento = (select id from departamentos where nombre = "' +  departamento + '")'
-                cursor.execute(sqlInsert)
-                usuario = cursor.fetchone()
-                conexion.commit()
-                conexion.close()
-                return usuario
-            except sqlite3.OperationalError:
-                print("Error en la consulta")
+            return usuario
+        except sqlite3.OperationalError:
+            print("Error en la consulta")
     
     
     def insertarUsuario(self,nombre,correo,contraseña,rol,departamento):

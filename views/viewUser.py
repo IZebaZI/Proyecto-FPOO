@@ -99,6 +99,8 @@ class viewUser:
         def realizarPedido(cantidadArticulos, userInfo):
             if cantidadArticulos == "":
                 messagebox.showwarning("Cuidado", "Inputs vacíos")
+            elif cantidadArticulos.isdigit() == False:
+                messagebox.showwarning("Cuidado", "Inputs numéricos contienen letras")
             elif int(cantidadArticulos) > 0:
                 status = controladorPedidos.crearPedido(userInfo[0])
                 if status == True:
@@ -144,36 +146,38 @@ class viewUser:
                         if nombreArticulo == "" or marcaArticulo == "" or cantidad == "":
                             messagebox.showwarning("Cuidado", "Inputs vacíos")
                         else:
-                            idArticulo = controladorPedidos.buscarArticulo(nombreArticulo, marcaArticulo)
-                            if idArticulo == "" or idArticulo == None:
-                                messagebox.showwarning("Cuidado", "El articulo seleccionado no está disponible en nuestro catálogo")
-                            else:
-                                idArticulo = idArticulo[0]
-                                idPedido = controladorPedidos.ultimoPedido(userInfo[0])
-                                idPedido = idPedido[0]
-                                print(idPedido)
-                                status = controladorPedidos.insertarArticulosPedido(idPedido, idArticulo, cantidad)
-                                if status == True:
-                                    cantidadArticulos = int(cantidadArticulos) - 1
-                                    if cantidadArticulos == 0:
-                                        labelArticulos.destroy()
-                                        dropArticulos.destroy()
-                                        labelMarca.destroy()
-                                        dropBrand.destroy()
-                                        labelUnits.destroy()
-                                        unitsInput.destroy()
-                                        btnPedirArticulo.destroy()
-                                        btnIniciarPedido['state'] = NORMAL
-                                        articleQuantityInput['state'] = NORMAL
-                                        messagebox.showinfo("Exito", "Se han insertado correctamente todos los articulos y se ha realizado el pedido")
-                                    else:
-                                        seleccionBrand.set(opcionesBrand[0])
-                                        seleccionArticulo.set(opcionesArticulos[0])
-                                        articleQuantityInput.delete(0,END)
-                                        articleQuantityInput.insert(0, str(cantidadArticulos))
-                                        messagebox.showinfo("Exito", "Se han insertado correctamente el articulo, pero aun quedan más por insertar")
+                            if cantidad.isdigit():
+                                idArticulo = controladorPedidos.buscarArticulo(nombreArticulo, marcaArticulo)
+                                if idArticulo == "" or idArticulo == None:
+                                    messagebox.showwarning("Cuidado", "El articulo seleccionado no está disponible en nuestro catálogo")
                                 else:
-                                    messagebox.showwarning("Cuidado", "No se pudo insertar el articulo seleccionado")
+                                    idArticulo = idArticulo[0]
+                                    idPedido = controladorPedidos.ultimoPedido(userInfo[0])
+                                    idPedido = idPedido[0]
+                                    status = controladorPedidos.insertarArticulosPedido(idPedido, idArticulo, cantidad)
+                                    if status == True:
+                                        cantidadArticulos = int(cantidadArticulos) - 1
+                                        if cantidadArticulos == 0:
+                                            labelArticulos.destroy()
+                                            dropArticulos.destroy()
+                                            labelMarca.destroy()
+                                            dropBrand.destroy()
+                                            labelUnits.destroy()
+                                            unitsInput.destroy()
+                                            btnPedirArticulo.destroy()
+                                            btnIniciarPedido['state'] = NORMAL
+                                            articleQuantityInput['state'] = NORMAL
+                                            messagebox.showinfo("Exito", "Se han insertado correctamente todos los articulos y se ha realizado el pedido")
+                                        else:
+                                            seleccionBrand.set(opcionesBrand[0])
+                                            seleccionArticulo.set(opcionesArticulos[0])
+                                            articleQuantityInput.delete(0,END)
+                                            articleQuantityInput.insert(0, str(cantidadArticulos))
+                                            messagebox.showinfo("Exito", "Se han insertado correctamente el articulo, pero aun quedan más por insertar")
+                                    else:
+                                        messagebox.showwarning("Cuidado", "No se pudo insertar el articulo seleccionado")
+                            else:
+                                messagebox.showwarning("Cuidado", "Inputs numéricos contienen letras")
                 else:
                     messagebox.showwarning("Cuidado", "No se pudo realizar el pedido")
             else:
