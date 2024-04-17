@@ -1,1 +1,1 @@
-loginView(controladorUsuarios, viewAdmin)
+.state('zoomed')

@@ -2,17 +2,25 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
-import matplotlib
-matplotlib.use("TkAgg")
+from datetime import datetime
+
+import os
+
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+
+from controllers.generadorPDFArticulos import *
+from controllers.generadorPDFPedidos import *
+
+generadorPDFArticulos = GenerarPDFInventarioArticulos()
+generadorPDFPedidos = GenerarPDFPedidos()
 
 class viewAdmin:
     def __init__(self, controladorUsuarios, controladorArticulos, controladorPedidos):
     # def __init__(self, controladorUsuarios, controladorArticulos, controladorPedidos):
         adminWindow = Tk()
         adminWindow.title("Merks & Spen: Admin")
-        adminWindow.geometry("1100x550")
+        adminWindow.state('zoomed')
 
         notebookParent = ttk.Notebook(adminWindow)
         notebookParent.pack(fill="both", expand="yes")
@@ -268,7 +276,40 @@ class viewAdmin:
                     messagebox.showinfo("Exito","El estado del pedido se actualizó correctamente")
                 else:
                     messagebox.showwarning("Cuidado","No se pudo actualizar el pedido")
+        
+        def generarReporteInventario():
+            generadorPDFArticulos.add_page()
+            generadorPDFArticulos.chapter_body()
             
+            hora = datetime.now()
+            fechaString = hora.strftime("%d-%m-%Y-%H-%M-%S")
+            
+            
+            
+            generadorPDFArticulos.output("RI_" + fechaString + ".pdf")
+            rutaPDF = "./" + "RI_" + fechaString + ".pdf"
+            
+            messagebox.showinfo("Archivo Creado","El PDF ha sido creado")
+            
+            os.system(f"start {rutaPDF}")
+        
+        
+        
+        def generarReportePedidos():
+            generadorPDFPedidos.add_page()
+            generadorPDFPedidos.chapter_body()
+            
+            hora = datetime.now()
+            fechaString = hora.strftime("%d-%m-%Y-%H-%M-%S")
+            
+            generadorPDFPedidos.output("RP_" + fechaString + ".pdf")
+            rutaPDF = "./" + "RP_" + fechaString + ".pdf"
+            
+            messagebox.showinfo("Archivo Creado","El PDF ha sido creado")
+            
+            os.system(f"start {rutaPDF}")
+        
+        
         # Create User ---------------------------------------------------------------------------------------------------------
         titleSection = Frame(createUser, bg="lightblue")
         titleSection.pack(expand=False, fill="both", side="top")
@@ -474,6 +515,7 @@ class viewAdmin:
         
         Button(requestSection, text="Actualizar Tabla", bg="red", fg="white", font=("Lexend", 9), command=actualizarListaPedidos).grid(column=0, row=3, sticky="s", padx=10, pady=(10, 0))
         
+        Button(requestSection, text="Generar Reporte", bg="blue", fg="white", font=("Lexend", 9), command=generarReportePedidos).grid(column=0, row=4, sticky="s", padx=10, pady=(10, 0))
         
 
         # Edit Requests ---------------------------------------------------------------------------------------------------------
@@ -546,17 +588,50 @@ class viewAdmin:
 
         Button(articlesSection, text="Actualizar Tabla", bg="red", fg="white", font=("Lexend", 9), command=actualizarLista).grid(column=0, row=3, sticky="", padx=5)
 
-        Label(articlesSection, text="Articulos Mas Vendidos", fg="darkblue", bg="lightblue", font=("Modern", 18)).grid(column=1, row=1, sticky="", pady=(0,10))
+        Label(articlesSection, text="Articulos Mas Vendidos", fg="darkblue", bg="lightblue", font=("Modern", 18)).grid(column=2, row=1, sticky="", pady=(0,10))
 
-        figure = Figure(figsize=(5,5), dpi=60)
+
+        graphTable = ttk.Treeview(articlesSection, columns=("#1","#2","#3"))
+        graphTable.column("#0", width=50)
+        graphTable.column("#1", width=100, anchor=CENTER)
+        graphTable.column("#2", width=100, anchor=CENTER)
+        graphTable.column("#3", width=100, anchor=CENTER)
+        
+        graphTable.heading("#0", text="#", anchor=CENTER)
+        graphTable.heading("#1", text="Artículo", anchor=CENTER)
+        graphTable.heading("#2", text="Marca", anchor=CENTER)
+        graphTable.heading("#3", text="Cantidad", anchor=CENTER)
+        
+        graphTable.grid(column=1, row=2, sticky="", padx=10)
+        
+        top10 = controladorArticulos.consultarMasVendidos()
+        
+        valores = []
+        nombres = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9','T10'] 
+        
+        
+        i = 1
+        for posicion in top10:
+            graphTable.insert("", END, text="T"+str(i), values=(posicion[0],posicion[1],posicion[2]))
+            valores.append(int(posicion[2]))
+            i += 1
+        
+
+        figure = plt.Figure(figsize=(5, 5), dpi=60)
+
         graph = figure.add_subplot(111)
-        graph.bar([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5])
+
+        graph.bar(range(len(valores)), valores)
+
+        graph.set_xticks(range(len(valores)))  
+        graph.set_xticklabels(nombres)  
+
 
         canvas = FigureCanvasTkAgg(figure, articlesSection)
         canvas.draw()
-        canvas.get_tk_widget().grid(column=1, row=2, sticky="")
+        canvas.get_tk_widget().grid(column=2, row=2, sticky="",padx=10)
 
-
+        Button(articlesSection, text="Crear PDF de inventario", bg="blue", fg="white", font=("Lexend", 9),command=generarReporteInventario).grid(column=0, row=4, sticky="", pady=10,)
 
         # Create Article ---------------------------------------------------------------------------------------------------------
         titleSection = Frame(createArticle, bg="lightblue")

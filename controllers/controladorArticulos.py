@@ -98,7 +98,7 @@ class ControladorArticulos:
                 print("No se pudo ejecutar la búsqueda")
         else:
             return False
-        
+    
     def eliminarArticulo(self, nombreIngresado, marcaIngresada):
         conexion = self.conexion()
         articulo = self.buscarArticulo(nombreIngresado, marcaIngresada)
@@ -112,3 +112,30 @@ class ControladorArticulos:
                 return True
             except sqlite3.OperationalError:
                 print("error")
+                
+    
+    def consultarMasVendidos(self):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sql = '''
+            select articulos.nombre,marcas.nombre, sum(articulosPedido.cantidad) 
+            from articulos
+            inner join articulosPedido on articulosPedido.id_articulo = articulos.id
+            inner join marcas on articulos.id_marca = marcas.id
+            group by articulos.id
+            order by sum(articulosPedido.cantidad) desc
+            limit 10
+            ;
+            '''
+            cursor.execute(sql) 
+            
+            top10 = cursor.fetchall()
+            
+            conexion.close()
+            
+            return top10
+        
+        except sqlite3.OperationalError:
+            print("error")
+    

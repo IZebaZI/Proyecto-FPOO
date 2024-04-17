@@ -14,7 +14,7 @@ controladorPedidos = ControladorPedidos()
 
 loginWindow = Tk()
 loginWindow.title("Merks & Spen: Login")
-loginWindow.geometry("1100x550")
+loginWindow.state('zoomed')
 
 login = Frame(loginWindow, bg="lightblue")
 login.pack(fill="both", expand="yes")

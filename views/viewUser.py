@@ -6,7 +6,7 @@ class viewUser:
     def __init__(self, userInfo, controladorPedidos, controladorArticulos):
         userWindow = Tk()
         userWindow.title(f"Merks & Spen: {str(userInfo[1])}")
-        userWindow.geometry("1100x550")
+        userWindow.state('zoomed')
 
         notebook = ttk.Notebook(userWindow)
         notebook.pack(fill="both", expand="yes")
@@ -28,7 +28,7 @@ class viewUser:
         requestTable = ttk.Treeview(requestSection, columns=("#1", "#2"))
         requestTable.column("#0", width=50)
         requestTable.column("#1", width=550, anchor=CENTER)
-        requestTable.column("#2", width=150, anchor=CENTER)
+        requestTable.column("#2", width=170, anchor=CENTER)
 
         requestTable.heading("#0", text="ID", anchor=CENTER)
         requestTable.heading("#1", text="Articulos/Marca/Cantidad", anchor=CENTER)
@@ -41,6 +41,9 @@ class viewUser:
         
         for pedido in misPedidos:
             articulosPedido = ""
+            if pedido[2] == 0 and pedido[1] == "Disponible para Recolección":
+                messagebox.showinfo("Pedido Listo", f"El pedido con el id: {pedido[0]} está listo para ser recolectado")
+                controladorPedidos.pedidoRevisado(pedido[0])
             for articulo in datosArticulos:
                 if articulo[0] == pedido[0]:
                     articulosPedido = articulosPedido + "(" + articulo[1] + ")  "
@@ -59,6 +62,9 @@ class viewUser:
                     requestTable.delete(item)
                 for pedido in misPedidos:
                     articulosPedido = ""
+                    if pedido[2] == 0 and pedido[1] == "Disponible para Recolección":
+                        messagebox.showinfo("Pedido Listo", f"El pedido con el id: {pedido[0]} está listo para ser recolectado")
+                        controladorPedidos.pedidoRevisado(pedido[0])
                     for articulo in datosArticulos:
                         if articulo[0] == pedido[0]:
                             articulosPedido = articulosPedido + "(" + articulo[1] + ")  "
