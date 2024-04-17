@@ -133,6 +133,19 @@ class ControladorPedidos():
             return articulo
         except sqlite3.OperationalError:
             print("No se pudo pedir el articulo")
+            
+    
+    def listaPedidos2xd(self):
+        conexion = self.conexion()
+        try:
+            cursor = conexion.cursor()
+            sqlSelect = "select distinct articulosPedido.id_pedido, usuarios.nombre, departamentos.nombre, pedidos.status from articulosPedido inner join pedidos on articulosPedido.id_pedido = pedidos.id inner join usuarios on pedidos.id_usuario = usuarios.id inner join articulos on articulosPedido.id_articulo = articulos.id inner join marcas on articulos.id_marca = marcas.id inner join departamentos on usuarios.id_departamento = departamentos.id order by departamentos.nombre asc"
+            cursor.execute(sqlSelect)
+            listaPedidos = cursor.fetchall()
+            conexion.close()
+            return listaPedidos
+        except sqlite3.OperationalError:
+            print("No se pudo ejecutar la consulta")
 <<<<<<< HEAD
     
     def pedidoRevisado(self, idPedido):
