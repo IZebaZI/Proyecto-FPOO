@@ -151,9 +151,8 @@ class ControladorPedidos():
         conexion = self.conexion()
         try:
             cursor = conexion.cursor()
-            sqlUpdate = "update pedidos set revisado = 1 where id = ?"
-            datos = (str(idPedido))
-            cursor.execute(sqlUpdate, datos)
+            sqlUpdate = "update pedidos set revisado = 1 where id =" + str(idPedido)
+            cursor.execute(sqlUpdate)
             conexion.commit()
             conexion.close()
             return True

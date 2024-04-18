@@ -567,7 +567,7 @@ class viewAdmin:
 
         opcionesStatus = ["Entregado", "En proceso", "Disponible para Recolección", "Articulos No Disponibles", "Cancelado"]
         seleccionStatus = StringVar()
-        seleccionStatus.set(opcionesStatus[0])
+        seleccionStatus.set("")
 
         dropStatus = ttk.OptionMenu(btnSection, seleccionStatus, *opcionesStatus)
         dropStatus.pack(pady=(0,10))
